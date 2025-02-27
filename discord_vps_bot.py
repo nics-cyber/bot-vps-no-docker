@@ -66,30 +66,33 @@ async def list_vps(interaction: discord.Interaction):
     else:
         await interaction.response.send_message("No VPS instances found.")
 
-# Slash command to deploy Docker container
-@bot.tree.command(name="deploy_docker", description="Deploy a Docker container on a VPS")
-async def deploy_docker(interaction: discord.Interaction, vps_id: str, image: str):
+# Slash command to deploy a service
+@bot.tree.command(name="deploy_service", description="Deploy a service on a VPS")
+async def deploy_service(interaction: discord.Interaction, vps_id: str, service: str):
     if vps_id in vps_instances:
-        command = f"docker run -d {image}"
+        command = f"nohup {service} &"  # Run the service in the background
         output = execute_ssh_command(command)
-        await interaction.response.send_message(f"Docker container deployed on {vps_id}:\n{output}")
+        await interaction.response.send_message(f"Service deployed on {vps_id}:\n{output}")
     else:
         await interaction.response.send_message(f"VPS {vps_id} not found.")
 
-# Slash command to start/stop/restart VPS
-@bot.tree.command(name="manage_vps", description="Start, stop, or restart a VPS")
-async def manage_vps(interaction: discord.Interaction, vps_id: str, action: str):
+# Slash command to start/stop/restart a service
+@bot.tree.command(name="manage_service", description="Start, stop, or restart a service")
+async def manage_service(interaction: discord.Interaction, vps_id: str, service: str, action: str):
     if vps_id in vps_instances:
         if action in ["start", "stop", "restart"]:
-            command = f"sudo systemctl {action} vps_{vps_id}"
+            if action == "stop":
+                command = f"pkill -f '{service}'"  # Stop the service
+            else:
+                command = f"nohup {service} &"  # Start or restart the service
             output = execute_ssh_command(command)
-            await interaction.response.send_message(f"VPS {vps_id} {action}ed:\n{output}")
+            await interaction.response.send_message(f"Service {service} {action}ed on {vps_id}:\n{output}")
         else:
             await interaction.response.send_message("Invalid action. Use 'start', 'stop', or 'restart'.")
     else:
         await interaction.response.send_message(f"VPS {vps_id} not found.")
 
-# Slash command to deploy tmate or serveo
+# Slash command to deploy SSH access (tmate or serveo)
 @bot.tree.command(name="deploy_ssh", description="Deploy SSH access using tmate or serveo")
 async def deploy_ssh(interaction: discord.Interaction, vps_id: str, method: str):
     if vps_id in vps_instances:
@@ -115,5 +118,7 @@ async def renew_vps(interaction: discord.Interaction, vps_id: str, days: int):
     else:
         await interaction.response.send_message(f"VPS {vps_id} not found.")
 
+# Run the bot
+bot.run(TOKEN)
 # Run the bot
 bot.run(TOKEN)
