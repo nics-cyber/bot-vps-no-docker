@@ -3,9 +3,10 @@ import paramiko
 import asyncio
 from datetime import datetime, timedelta
 from discord.ext import commands
+import sys
 
 # Discord bot token
-TOKEN = 'YOUR_DISCORD_BOT_TOKEN'
+TOKEN = ''
 
 # SSH credentials for the VPS
 SSH_HOST = 'your.vps.host'
@@ -118,7 +119,19 @@ async def renew_vps(interaction: discord.Interaction, vps_id: str, days: int):
     else:
         await interaction.response.send_message(f"VPS {vps_id} not found.")
 
+# Sync the bot tree commands
+async def setup():
+    await bot.wait_until_ready()
+    await bot.tree.sync()
+
+bot.loop.create_task(setup())
+
 # Run the bot
-bot.run(TOKEN)
+if TOKEN:
+    bot.run(TOKEN)
+else:
+    print("No bot token provided. Please set the TOKEN variable.")
+    sys.exit(1)
+
 # Run the bot
 bot.run(TOKEN)
