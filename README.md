@@ -1,238 +1,125 @@
 
 
----
+# Discord VPS Management Bot
 
-### **Step 1: Running the Bot**
-
-1. **Install Dependencies**:
-   - Ensure you have Python 3.x installed.
-   - Install the required Python libraries:
-     ```bash
-     pip install discord.py paramiko
-     ```
-
-2. **Set Up the Bot**:
-   - Replace the placeholders in the script with your actual credentials:
-     - `YOUR_DISCORD_BOT_TOKEN`: Your Discord bot token.
-     - `your.vps.host`: The hostname or IP address of your VPS.
-     - `root`: The SSH username.
-     - `your_password`: The SSH password.
-
-3. **Run the Bot**:
-   - Save the script as `discord_vps_bot.py`.
-   - Run the bot using Python:
-     ```bash
-     python3 discord_vps_bot.py
-     ```
-
-4. **Invite the Bot to Your Server**:
-   - Go to the [Discord Developer Portal](https://discord.com/developers/applications).
-   - Select your bot and generate an invite link with the `applications.commands` and `bot` scopes.
-   - Use the link to invite the bot to your server.
-
----
-
-### **Step 2: Creating a `README.md` File**
-
-A `README.md` file is essential for documenting your project. Below is a template you can use:
-
-```markdown
-# Discord VPS Creator Bot
-
-A Discord bot for managing VPS instances, deploying Docker containers, and providing SSH access via tmate or Serveo.
-
----
+This bot allows you to manage VPS instances from within Discord. You can create, delete, list, and manage the deployment of services on VPS instances via SSH. The bot uses `paramiko` to execute SSH commands and integrates with Discord using `discord.py`.
 
 ## Features
-
-- **VPS Management**:
-  - Create, delete, list, start, stop, and restart VPS instances.
-  - Customize RAM and OS (supports Debian 12 and Ubuntu 22.04).
-- **Docker Deployment**:
-  - Deploy Docker containers on VPS instances.
-- **SSH Access**:
-  - Choose between `tmate` or `serveo.net` for instant SSH access.
-- **Renew and Expire System**:
-  - Track expiration dates and allow renewals.
-- **Slash Commands**:
-  - Enhanced user experience with Discord slash commands.
-
----
+- Create a VPS instance with specified RAM and OS.
+- Delete a VPS instance.
+- List all VPS instances and their status.
+- Deploy services on a VPS.
+- Manage services (start, stop, restart) on a VPS.
+- Deploy SSH access using `tmate` or `serveo`.
+- Renew VPS instances for a specified number of days.
 
 ## Requirements
+- Python 3.8 or higher
+- `discord.py` library
+- `paramiko` library
+- A VPS with SSH access
 
-- Python 3.x
-- Discord bot token
-- SSH access to a VPS
-- Docker (optional, for container deployment)
+## Setup Guide
 
----
+### 1. Clone the repository (or copy the script)
+If this is a standalone script, you can directly copy the code to your project directory.
 
-## Installation
+### 2. Install the required dependencies
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-username/discord-vps-creator.git
-   cd discord-vps-creator
-   ```
+To install the required dependencies, run the following command:
 
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+```bash
+pip install discord.py paramiko
+```
 
-3. Configure the bot:
-   - Replace placeholders in `discord_vps_bot.py` with your credentials.
+### 3. Configure the bot
 
-4. Run the bot:
-   ```bash
-   python3 discord_vps_bot.py
-   ```
+#### Discord Bot Token:
+- Go to the [Discord Developer Portal](https://discord.com/developers/applications) and create a new application.
+- Under the "Bot" section, create a bot and copy the `TOKEN`.
+- Replace `YOUR_DISCORD_BOT_TOKEN` with your token in the code.
+
+#### SSH Credentials:
+- You will need a VPS to manage.
+- Replace the following variables with your SSH credentials:
+  - `SSH_HOST`: Your VPS's host or IP address.
+  - `SSH_PORT`: The SSH port (default is 22).
+  - `SSH_USER`: Your SSH username (usually `root` or another user).
+  - `SSH_PASSWORD`: Your SSH password for the VPS.
+
+```python
+# SSH credentials for the VPS
+SSH_HOST = 'your.vps.host'
+SSH_PORT = 22
+SSH_USER = 'root'
+SSH_PASSWORD = 'your_password'
+```
+
+### 4. Run the bot
+
+To start the bot, simply run the Python script:
+
+```bash
+python bot_script.py
+```
+
+Replace `bot_script.py` with the filename of your script.
+
+### 5. Invite the Bot to Your Discord Server
+
+1. Go to the [Discord Developer Portal](https://discord.com/developers/applications).
+2. Select your application and navigate to the "OAuth2" tab.
+3. Under "OAuth2", go to the "URL Generator".
+4. Select the `bot` scope and assign necessary permissions (like `Administrator` or specific permissions based on your requirements).
+5. Copy the generated URL and visit it to invite the bot to your server.
 
 ---
 
 ## Usage
 
-### Slash Commands
+Once the bot is running, you can use the following commands in your Discord server:
 
-- **Create a VPS**:
-  ```
-  /create_vps ram:4GB os:ubuntu22.04
-  ```
+### **Create a new VPS**
+`/create_vps <ram> <os>`
+- Example: `/create_vps 4GB Ubuntu`
 
-- **Delete a VPS**:
-  ```
-  /delete_vps vps_id:vps_1
-  ```
+### **Delete a VPS**
+`/delete_vps <vps_id>`
+- Example: `/delete_vps vps_1`
 
-- **List VPS Instances**:
-  ```
-  /list_vps
-  ```
+### **List all VPS instances**
+`/list_vps`
 
-- **Deploy Docker Container**:
-  ```
-  /deploy_docker vps_id:vps_1 image:nginx
-  ```
+### **Deploy a service on a VPS**
+`/deploy_service <vps_id> <service>`
+- Example: `/deploy_service vps_1 apache2`
 
-- **Manage VPS**:
-  ```
-  /manage_vps vps_id:vps_1 action:start
-  ```
+### **Manage a service (start, stop, restart)**
+`/manage_service <vps_id> <service> <action>`
+- Example: `/manage_service vps_1 apache2 start`
 
-- **Deploy SSH Access**:
-  ```
-  /deploy_ssh vps_id:vps_1 method:tmate
-  ```
+### **Deploy SSH access using tmate or serveo**
+`/deploy_ssh <vps_id> <method>`
+- Example: `/deploy_ssh vps_1 tmate`
+- Example: `/deploy_ssh vps_1 serveo`
 
-- **Renew VPS**:
-  ```
-  /renew_vps vps_id:vps_1 days:30
-  ```
+### **Renew a VPS**
+`/renew_vps <vps_id> <days>`
+- Example: `/renew_vps vps_1 30`
 
 ---
 
-## Contributing
+## Troubleshooting
 
-Contributions are welcome! Please open an issue or submit a pull request.
+- **Bot not responding**: Ensure that the bot is correctly added to the server and that your token and permissions are set properly.
+- **SSH connection issues**: Double-check that the VPS's IP, SSH port, username, and password are correct.
+- **Missing dependencies**: If you see errors about missing libraries, make sure you've installed all required packages using `pip`.
 
 ---
 
 ## License
 
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
-```
+This project is open-source and available under the MIT License.
 
 ---
 
-### **Step 3: Adding a `requirements.txt` File**
-
-Create a `requirements.txt` file to list the dependencies for your project:
-
-```plaintext
-discord.py
-paramiko
-```
-
----
-
-### **Step 4: Organizing Your Project**
-
-Your project structure should look like this:
-
-```
-discord-vps-creator/
-├── discord_vps_bot.py
-├── README.md
-├── requirements.txt
-└── LICENSE (optional)
-```
-
----
-
-### **Step 5: Publishing to GitHub**
-
-1. Create a new repository on GitHub.
-2. Push your code to the repository:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit"
-   git branch -M main
-   git remote add origin https://github.com/your-username/discord-vps-creator.git
-   git push -u origin main
-   ```
-
-3. Share the repository link with others!
-
----
-
-### **Step 6: Running the Bot in the Background**
-
-To keep the bot running 24/7, you can use a process manager like `pm2` or `systemd`.
-
-#### Using `pm2`:
-1. Install `pm2`:
-   ```bash
-   npm install -g pm2
-   ```
-
-2. Start the bot with `pm2`:
-   ```bash
-   pm2 start discord_vps_bot.py --interpreter python3
-   ```
-
-3. Save the process list:
-   ```bash
-   pm2 save
-   ```
-
-#### Using `systemd`:
-1. Create a service file:
-   ```bash
-   sudo nano /etc/systemd/system/discord-vps-bot.service
-   ```
-
-2. Add the following content:
-   ```ini
-   [Unit]
-   Description=Discord VPS Bot
-   After=network.target
-
-   [Service]
-   User=your-username
-   WorkingDirectory=/path/to/discord-vps-creator
-   ExecStart=/usr/bin/python3 /path/to/discord-vps-creator/discord_vps_bot.py
-   Restart=always
-
-   [Install]
-   WantedBy=multi-user.target
-   ```
-
-3. Enable and start the service:
-   ```bash
-   sudo systemctl enable discord-vps-bot
-   sudo systemctl start discord-vps-bot
-   ```
-
----
